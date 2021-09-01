@@ -5,7 +5,6 @@ const https = require('https');
 let Parser = require('rss-parser');
 const axios = require('axios');
 const { response } = require('express');
-const dateMath = require('date-arithmetic');
 
 const CONSTANTS = {
     RSS_URL: 'https://www.omnycontent.com/d/playlist/aaea4e69-af51-495e-afc9-a9760146922b/46c6373e-26ec-4a0d-a300-aadc0017dd97/e67fc310-4408-4735-8916-aadc0017dda5/podcast.rss',
@@ -20,8 +19,6 @@ const httpsAgent = new https.Agent({
 const app = express(),
     bodyParser = require("body-parser"),
     port = 3080;
-
-const users = [];
 
 app.use(bodyParser.json(), function(req, res, next){
     res.header("Access-Control-Allow-Origin", "*");
@@ -49,7 +46,8 @@ app.get('/api/rssData', async (req, res) => {
             'state': '',
             'country': '',
             'date': '',
-            'link': ''
+            'link': '',
+            'geojson': ''
         }
 
         data_temp['id'] = id++;
@@ -57,16 +55,6 @@ app.get('/api/rssData', async (req, res) => {
         data_temp['title'] = title;
         data_temp['date'] = new Date(item['isoDate']);
         data_temp['link'] = item['link'];
-
-        // if(data_temp['id'] === 1){
-        //     let latestDate = data_temp['date'];
-        //     fs.writeFile('latestDate.txt', latestDate.toString(), function(err,data){
-        //         if(err){
-        //             return console.log(err);
-        //         }
-        //         console.log(data)
-        //     });
-        // }
 
         if(title.toLowerCase().includes('bonus')){
             return;
@@ -128,98 +116,48 @@ app.get('/api/rssData', async (req, res) => {
                 data_temp['country'] = loc_split[2];
             }
         }
-
-        RSS_data['data'].push(data_temp);
-    })
-
-    res.send(RSS_data);
-});
-
-app.post('/api/coordinates', async (req, res) => {
-    var data = [];
-
-    req.body['data'].forEach(episode => {
-        const model ={
-            'title': episode['title'],
-            'link': episode['link'],
-            'coordinates': []
-        }
-        const request =  axios.get(CONSTANTS.OPENCAGE_URL,{
-            params: {
-                key: CONSTANTS.OPENCAGE_API_KEY,
-                q: encodeURI(`${episode['city']}, ${episode['state']}`),
-                limit: 1,
-                no_annotations: 1
-            }
+        
+        storeCoordinates(data_temp['city'], data_temp['state']).then(res => {
+            data_temp['geojson'] = res;
+            console.log("1" + data_temp['geojson'])
+            RSS_data['data'].push(data_temp);
         })
-        .then(res => res['data'])
-        .then(json => {
-            model['coordinates'] = json['results'][0]['geometry'];
-            data.push(model);
-        });
+        
+    })
+    setTimeout(() => {
+        res.send(RSS_data);
+    }, 5000);
+});
+
+const storeCoordinates = async(city, state) => {
+    let response = await getCoordinates(city, state);
+    setTimeout(() => {return response}, 5000);
+    return response;
+}
+
+async function getCoordinates(city, state) {
+    let geojson_entry = {
+        "type": "Feature",
+        "geometry": {
+            "type": "Point",
+            "coordinates": []
+        }
+    }
+    const res = await axios.get(CONSTANTS.OPENCAGE_URL,{
+        params: {
+            key: CONSTANTS.OPENCAGE_API_KEY,
+            q: encodeURI(`${city}, ${state}`),
+            limit: 1,
+            no_annotations: 1
+        }
     });
-    setTimeout(() => res.send(data), 4000);
-    setTimeout(() => fs.writeFile('murderinfo.json', JSON.stringify(data), function(err,data){
-        if(err){
-            return console.log(err);
-        }
-        console.log(data)
-    }), 5000);
-    setTimeout(() => data.length = 0, 6000);
-});
 
-app.get('/api/latestDate', (req, res) =>{
-    fs.readFile('latestDate.txt', 'utf-8', (err, data) => {
-        if(err) throw err;
+    const data = await res['data']['results'][0]['geometry'];
+    
+    geojson_entry['geometry']['coordinates'] = await data;
 
-        let date = new Date(data);
-        let weekLater = dateMath.add(date, 7, 'day');
-        let inRange = false;
-
-        if((Date.now() > date) && (Date.now() < weekLater)){
-            inRange = true;
-        }
-        res.send(inRange);
-    })
-});
-
-app.get('/api/geojson', (req, res) => {
-    fs.readFile('murderinfo.json', 'utf-8', (err, data) => {
-        if(err) throw err;
-
-        let collection = {
-            "type": 'FeatureCollection',
-            'features': []
-        }
-
-        let geojson = []
-
-        let json_data = JSON.parse(data);
-
-        json_data.forEach(episode => {
-            let geojson_entry = {
-                "type": "Feature",
-                "geometry": {
-                    "type": "Point",
-                    "coordinates": []
-                },
-                "properties": {
-                    "name": "",
-                    "link": ""
-                }
-            }
-
-            geojson_entry['geometry']['coordinates'] = [episode['coordinates']['lng'],episode['coordinates']['lat']];
-            geojson_entry['properties']['name'] = episode['title'];
-            geojson_entry['properties']['link'] = episode['link'];
-            geojson.push(geojson_entry);
-        });
-
-        collection.features = geojson;
-
-        res.send(collection);
-    })
-})
+    return geojson_entry;
+}
 
 app.get('/', (req, res) => {
     res.send('App Works !!!!');
