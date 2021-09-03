@@ -8,12 +8,14 @@ import { HttpClientModule } from '@angular/common/http';
 import { AppComponent } from './app.component';
 import { EpisodesComponent } from './components/episodes/episodes.component';
 import { EpisodeListComponent } from './components/episode-list/episode-list.component';
+import { MurderMapComponent } from './components/murder-map/murder-map.component';
 
 @NgModule({
   declarations: [
     AppComponent,
     EpisodesComponent,
-    EpisodeListComponent
+    EpisodeListComponent,
+    MurderMapComponent
   ],
   imports: [
     BrowserModule,

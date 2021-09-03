@@ -1,4 +1,4 @@
-<button (click)="loadandStoreData()">Load Data</button>
+<!-- <button (click)="loadandStoreData()">Load Data</button>
 <button (click)="getEpisodeData()">Get Data</button>
 
 <ul class="collection">
@@ -6,4 +6,27 @@
     <span> {{episode.payload.doc.data().episode}}: </span>
     <span> <a href={{episode.payload.doc.data().link}}>{{episode.payload.doc.data().title}} - {{episode.payload.doc.id}}</a></span>
   </li>
-</ul>
+</ul> -->
+
+<div class="container">
+  <div class="link-row">
+      <a href="https://open.spotify.com/show/1fA0drEA0Tnbg6rzM43aff" target="_blank" class="fab fa-spotify"></a>
+      <a href="https://www.patreon.com/CrimeInSports" target="_blank" class="fab fa-patreon"></a>
+      <a href="https://twitter.com/murdersmall" target="_blank" class="fab fa-twitter"></a>
+      <a href="https://www.instagram.com/smalltownmurder/?hl=en" target="_blank" class="fab fa-instagram"></a>
+      <a href="https://www.facebook.com/smalltownpod" target="_blank" class="fab fa-facebook"></a>
+      <a href="https://podcasts.apple.com/us/podcast/small-town-murder/id1194755213" target="_blank" class="fas fa-podcast"></a>
+  </div>
+  <h1 id="title">Small Town Murder Map</h1>
+  <div>
+      <h3 id="subtitle">"... Assholes, But Not Scumbags"</h3>
+      <h5 id="byline">By JAMES PIETRAGALLO & JIMMY WHISMAN</h5>
+      <p class="intro-text">This map plots out the location that each 
+          episode of Small Town Murder documents to 
+          their audience with links to each. Please 
+          consider supporting them on Patreon or leaving a 
+          review on Apple Podcasts.</p>
+  </div>
+  <p id="created">Created by JackMichael Ward</p>
+</div>
+<murder-map></murder-map>
