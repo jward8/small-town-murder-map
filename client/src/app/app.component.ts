@@ -1,4 +1,4 @@
-import { Component } from '@angular/core';
+import { Component, OnInit } from '@angular/core';
 import { PodcastService } from './services/podcast.service';
 import { FirestoreService } from './services/firestore.service';
 
@@ -7,27 +7,28 @@ import { FirestoreService } from './services/firestore.service';
   templateUrl: './app.component.html',
   styleUrls: ['./app.component.css']
 })
-export class AppComponent {
+export class AppComponent implements OnInit {
   
   episodes: any;
 
   constructor(private podcastService: PodcastService,
     private firestore: FirestoreService,) {}
-  
-  loadandStoreData() {
-    this.podcastService.getEpisodeData().subscribe(data => {
-      console.dir(data.data)
-      data.data.forEach(podcast => {
-        this.firestore.saveEpisodeData(podcast)
-          .then(res => { console.log(res); })
-      })
-    })
-  }
 
-  getEpisodeData() {
-    this.firestore.getEpisodeData().subscribe(res =>{
-      this.episodes = res
-    });
+    ngOnInit(): void {
+      this.firestore.getEpisodeData().subscribe(
+        data => {
+          this.episodes = data;
+        }
+      )
+    }
+
+  gatherEpisodeData() {
+    this.podcastService.getNewEpisodeData(this.episodes.length).subscribe(res =>
+      {
+        res.data.forEach(episode => {
+          this.firestore.saveEpisodeData(episode).then(res => { console.log(res); })
+        })
+      })
   }
 
 }
