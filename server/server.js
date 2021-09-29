@@ -132,7 +132,9 @@ async function formatData(episodes, size) {
     const RSS_data = {
         'data': []
     }
-    let limit = episodes.items.length - size['size'];
+
+    //TODO: need to find a better way to figure out the number of bonus episodes
+    let limit = episodes.items.length - size - 6;
 
     let id = 1;
 
@@ -266,7 +268,7 @@ app.get('/api/newEpisodes', async (req, resp) => {
 
     const feed = await parser.parseURL(CONSTANTS.RSS_URL);
 
-    formatData(feed, req.body).then(res => resp.send(res));
+    formatData(feed, req.query.size).then(res => resp.send(res));
 })
 
 app.get('/', (req, res) => {

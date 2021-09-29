@@ -21,26 +21,10 @@ export class AppComponent implements OnInit {
         }
       )
     }
-  
-  loadandStoreData() {
-    this.podcastService.getEpisodeData().subscribe(data => {
-      data.data.forEach(podcast => {
-        this.firestore.saveEpisodeData(podcast)
-          .then(res => { console.log(res); })
-      })
-    })
-  }
-
-  getEpisodeData() {
-    this.firestore.getEpisodeData().subscribe(res =>{
-      this.episodes = res
-    });
-  }
 
   gatherEpisodeData() {
     this.podcastService.getNewEpisodeData(this.episodes.length).subscribe(res =>
       {
-        console.log(res);
         res.data.forEach(episode => {
           this.firestore.saveEpisodeData(episode).then(res => { console.log(res); })
         })
