@@ -1,7 +1,7 @@
 import {GeoJson} from "./geojson"
 
 export interface Episode {
-    "vity": String,
+    "city": String,
     "country": String,
     "date": String,
     "episode": String,

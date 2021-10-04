@@ -1,6 +1,7 @@
 import { Component, OnInit } from '@angular/core';
 import { PodcastService } from './services/podcast.service';
 import { FirestoreService } from './services/firestore.service';
+import { Episode } from './models/episode';
 
 @Component({
   selector: 'app-root',
@@ -10,9 +11,15 @@ import { FirestoreService } from './services/firestore.service';
 export class AppComponent implements OnInit {
   
   episodes: any;
+  showDetails: boolean = false;
+  townDetails: Episode;
+  episodeDate: string;
+
 
   constructor(private podcastService: PodcastService,
-    private firestore: FirestoreService,) {}
+    private firestore: FirestoreService,) {
+      this.setTownDetails = this.setTownDetails.bind(this);
+    }
 
     ngOnInit(): void {
       this.firestore.getEpisodeData().subscribe(
@@ -29,6 +36,17 @@ export class AppComponent implements OnInit {
           this.firestore.saveEpisodeData(episode).then(res => { console.log(res); })
         })
       })
+  }
+
+  setTownDetails(town: any) {
+    let date = new Date(town.date);
+    this.episodeDate = date.toLocaleDateString("en-US", {weekday: 'long', year: 'numeric', month: 'long', day: 'numeric'})
+    this.townDetails = town;
+    this.showDetails = true;
+  }
+
+  deselectDetails() {
+    this.showDetails = false;
   }
 
 }

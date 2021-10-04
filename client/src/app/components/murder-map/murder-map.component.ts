@@ -1,4 +1,4 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, Input, OnInit } from '@angular/core';
 import { FirestoreService } from 'src/app/services/firestore.service';
 import mapboxgl from 'mapbox-gl';
 import { Episode } from '../../models/episode';
@@ -12,6 +12,7 @@ export class MurderMapComponent implements OnInit {
 
   map: any;
   data: any;
+  @Input() setTownDetails: any;
 
   constructor(private firestore: FirestoreService) { }
 
@@ -32,23 +33,25 @@ export class MurderMapComponent implements OnInit {
       center: [-109.909416, 40.041069],
       zoom: 4
     });
-//town[0].payload.doc.data()
+
+    let mapBackground = document.getElementById('map');
+    
     let town = this.data;
     var title = document.getElementById('title');
+    let recallDetails = this.setTownDetails;
 
-    map.on('load', function(){
+    map.on('load', function() {
 
-      if(this !== undefined){
+      if(this !== undefined) {
         town.forEach(function (marker) {
           var mark = document.createElement('div');
           mark.className = 'marker';
           mark.style.backgroundImage = "url(../../assets/0.33x/marker.png)"
           mark.style.width = '27px';
           mark.style.height = '27px';
-    
-          // mark.addEventListener('click', function () {
-          //   map.flyTo({center: [marker.payload.doc.data().geojson.geometry.coordinates.lat + .25 ,marker.payload.doc.data().geojson.geometry.coordinates.lng], zoom:10})
-          // });
+          mark.addEventListener('click', function() {
+            recallDetails(marker.payload.doc.data())
+          })
     
           new mapboxgl.Marker(mark)
             .setLngLat(marker.payload.doc.data().geojson.geometry.coordinates)
