@@ -1,19 +1,22 @@
 <div class="container">
-  <div *ngIf="this.showDetails">
-    <h1 id="title">{{this.townDetails.title}}</h1>
+  <div *ngIf="this.showDetails" class="container">
+    <span class="clickable" (click)="deselectDetails()">
+      <i class="fas fa-chevron-circle-left icon-links"></i>
+    </span>
+    <h1 id="episode-title">{{this.townDetails.title}}</h1>
     <div>
-      <h3>Date Published: {{this.episodeDate}}</h3>
-      <h5>Listen to the episode <span><a href={{this.townDetails.link}}>here</a></span></h5>
+      <h3 id="byline">Date Published: {{this.episodeDate}}</h3>
+      <h5 id="byline">Listen to the episode <span><a id="text-link" href={{this.townDetails.link}}>here</a></span></h5>
     </div>
   </div>
-  <div *ngIf="!this.showDetails">
+  <div *ngIf="!this.showDetails" class="container">
     <div class="link-row">
-      <a href="https://open.spotify.com/show/1fA0drEA0Tnbg6rzM43aff" target="_blank" class="fab fa-spotify"></a>
-      <a href="https://www.patreon.com/CrimeInSports" target="_blank" class="fab fa-patreon"></a>
-      <a href="https://twitter.com/murdersmall" target="_blank" class="fab fa-twitter"></a>
-      <a href="https://www.instagram.com/smalltownmurder/?hl=en" target="_blank" class="fab fa-instagram"></a>
-      <a href="https://www.facebook.com/smalltownpod" target="_blank" class="fab fa-facebook"></a>
-      <a href="https://podcasts.apple.com/us/podcast/small-town-murder/id1194755213" target="_blank" class="fas fa-podcast"></a>
+      <a href="https://open.spotify.com/show/1fA0drEA0Tnbg6rzM43aff" target="_blank" class="fab fa-spotify icon-links"></a>
+      <a href="https://www.patreon.com/CrimeInSports" target="_blank" class="fab fa-patreon icon-links"></a>
+      <a href="https://twitter.com/murdersmall" target="_blank" class="fab fa-twitter icon-links"></a>
+      <a href="https://www.instagram.com/smalltownmurder/?hl=en" target="_blank" class="fab fa-instagram icon-links"></a>
+      <a href="https://www.facebook.com/smalltownpod" target="_blank" class="fab fa-facebook icon-links"></a>
+      <a href="https://podcasts.apple.com/us/podcast/small-town-murder/id1194755213" target="_blank" class="fas fa-podcast icon-links"></a>
     </div>
     <h1 id="title">Small Town Murder Map</h1>
     <div>
