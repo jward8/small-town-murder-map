@@ -47,6 +47,7 @@ app.get('/api/rssData', async (req, res) => {
             'country': '',
             'date': '',
             'link': '',
+            'description': '',
             'geojson': ''
         }
 
@@ -62,6 +63,11 @@ app.get('/api/rssData', async (req, res) => {
 
         var part1Index = title.indexOf("- Part 1");
         var part2Index = title.indexOf("- Part 2");
+        var descriptionIndex = item.contentSnippet.indexOf("Hosted by");
+
+        if(descriptionIndex !== -1) {
+            data_temp['description'] = item.contentSnippet.substring(0, descriptionIndex).trim();
+        }
 
         if(part1Index !== -1){
             title = title.substring(0, part1Index).trim();
@@ -117,10 +123,10 @@ app.get('/api/rssData', async (req, res) => {
             }
         }
         
-        storeCoordinates(data_temp['city'], data_temp['state']).then(res => {
-            data_temp['geojson'] = res;
-            RSS_data['data'].push(data_temp);
-        })
+        // storeCoordinates(data_temp['city'], data_temp['state']).then(res => {
+        //     data_temp['geojson'] = res;
+        //     RSS_data['data'].push(data_temp);
+        // })
         
     })
     setTimeout(() => {
